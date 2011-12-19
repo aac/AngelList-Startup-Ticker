@@ -1,0 +1,54 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>AngelList Startup Ticker</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="stylesheet" href="bootstrap.css">
+  <style type="text/css">
+    body {
+        padding-top: 60px; /* 40px to make the container go all the way to the bottom of the topbar */
+    }
+    .topbar-inner, .topbar .fill {
+        background-color: #F2F3F4;
+        background-image: none;
+    }
+    .topbar h3 a, .topbar .brand {
+        color: black;
+    }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    function resize(img){
+      var height = $(img).height();
+      $(img).css("margin",(90 - height)/2.0 + "px 0");
+    }
+
+    $(document).ready(function(){
+      var socket = io.connect('http://localhost:3000');
+      socket.on('startup', function (startup) {
+        var img = $(document.createElement('img')).attr("width","90").attr("class","thumbnail").attr("src",startup.logo_url);
+        var a = $(document.createElement('a')).attr("href",startup.angellist_url);;
+        var li = document.createElement('li');
+        
+        $(a).prepend(img);
+        $(li).prepend(a);
+        $(".media-grid").prepend(li);
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="topbar">
+    <div class="fill">
+      <div class="container">
+        <a class="brand" href="#">AngelList Startups</a>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <ul class="media-grid" />
+  </div>
+</body>
+</html>
