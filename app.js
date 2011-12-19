@@ -15,30 +15,13 @@ app.get('/', function (req, res) {
 	res.sendfile(__dirname + '/index.html');
     });
 
-var lastStartup;
+var lastStartupId;
+var lastVisibleStartup;
 
 io.sockets.on('connection', function (socket) {
-	socket.on('connect', function(){
-		if (!(lastStartup === undefined)){
-		    socket.emit('startup', lastStartup);
-		}
-	    });
-	/*
-	var startups = setInterval(function () {
-		socket.emit('startup', { "id": 1124,
-					 "hidden": false,
-					 "name": "500 Startups (Fund)",
-					 "angellist_url": "http://angel.co/500-startups-fund",
-					 "logo_url": "https://s3.amazonaws.com/photos.angel.co/startups/1124-medium?1300233013",
-					 "product_desc": "500 Startups is a next-generation venture capital seed fund...",
-					 "follower_count": 597,
-					 "company_url": "http://500startups.com"});
-	    }, 5000);
-	
-	socket.on('disconnect', function(){
-		clearInterval(startups);
-	    });
-	*/
+	if (!(lastVisibleStartup === undefined)){
+	    socket.emit('startup', lastVisibleStartup);
+	}
     });
 
 var request = require('request');
@@ -46,10 +29,18 @@ var request = require('request');
 function getAndSendNewStartups(){
     function processStartups(startups)
     {
-	startups.filter(function(s){return (s.hidden === false) && ((lastStartup === undefined) || (s.id > lastStartup.id));}).reverse().forEach(function(s){
-		io.sockets.emit('startup', s);
+	var visibleStartups = startups.filter(function(s){
+		return !s.hidden && ((lastStartupId === undefined) || s.id > lastStartupId);
 	    });
-	lastStartup = startups[0];
+	lastStartupId = startups[0].id;
+
+	if (visibleStartups.length > 0){
+	    lastVisibleStartup = visibleStartups[0];
+
+	    visibleStartups.reverse().forEach(function(s){
+		    io.sockets.emit('startup', s);
+		});
+	}
     }
     
     //console.log('requesting startups');
