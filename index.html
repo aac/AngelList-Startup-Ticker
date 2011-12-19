@@ -28,7 +28,7 @@
     $(document).ready(function(){
       var socket = io.connect('http://localhost:3000');
       socket.on('startup', function (startup) {
-        var img = $(document.createElement('img')).attr("width","90").attr("class","thumbnail").attr("src",startup.logo_url);
+        var img = $(document.createElement('img')).attr("width","90").attr("height","90").attr("class","thumbnail").attr("src",startup.logo_url);
         var a = $(document.createElement('a')).attr("href",startup.angellist_url);;
         var li = document.createElement('li');
         
