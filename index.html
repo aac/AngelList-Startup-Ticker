@@ -31,18 +31,37 @@
           $(this).hide();
           var w = this.width;
           var h = this.height;
-          var adjH = Math.floor(h*90/w);
-          var marginHeight = 0;
-          if (adjH < 90) {
-	    marginHeight = Math.ceil((90 - adjH)/2.0);
-	  }
+
+          function pad(a,b,callback){
+            var adj = Math.floor(b*90.0/a);
+            var margin = 0;
+            if (adj < 90) {
+	      margin = Math.ceil((90 - adj)/2.0);
+	    }
+	    callback(90,adj,margin);
+          }
+          
+	  var padding = "";
+          if (w > h) {
+            pad(w,h,function(width,height,padding){
+              $(img).attr("width", width);
+	      $(img).attr("height", height);
+	      $(img).css("padding", padding + "px 0px " + (width - height - padding) + "px");
+            });
+          }
+          else {
+            pad(h,w,function(height,width,padding){
+              $(img).attr("width", width);
+	      $(img).attr("height", height);
+	      $(img).css("padding", "0px " + padding + "px 0px " + (height - width - padding) + "px");
+            });
+          }
+
           $(a).append(this);
 	  $(li).append(a);
 	  $(".media-grid").prepend(li);
 
-          $(this).attr("width", "90");
-	  $(this).attr("height", adjH);
-	  $(this).css("padding", marginHeight + "px 0px " + (90 - adjH - marginHeight) + "px");
+
 	  $(this).show();
         });
         img.attr("src",startup.logo_url);
