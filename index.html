@@ -20,21 +20,32 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    function resize(img){
-      var height = $(img).height();
-      $(img).css("margin",(90 - height)/2.0 + "px 0");
-    }
-
     $(document).ready(function(){
       var socket = io.connect('http://localhost:3000');
       socket.on('startup', function (startup) {
-        var img = $(document.createElement('img')).attr("width","90").attr("height","90").attr("class","thumbnail").attr("src",startup.logo_url);
         var a = $(document.createElement('a')).attr("href",startup.angellist_url);;
         var li = document.createElement('li');
-        
-        $(a).prepend(img);
-        $(li).prepend(a);
-        $(".media-grid").prepend(li);
+
+        var img = $(document.createElement('img')).attr("class","thumbnail");
+        img.load(function(){
+          $(this).hide();
+          var w = this.width;
+          var h = this.height;
+          var adjH = Math.floor(h*90/w);
+          var marginHeight = 0;
+          if (adjH < 90) {
+	    marginHeight = Math.ceil((90 - adjH)/2.0);
+	  }
+          $(a).append(this);
+	  $(li).append(a);
+	  $(".media-grid").prepend(li);
+
+          $(this).attr("width", "90");
+	  $(this).attr("height", adjH);
+	  $(this).css("padding", marginHeight + "px 0px " + (90 - adjH - marginHeight) + "px");
+	  $(this).show();
+        });
+        img.attr("src",startup.logo_url);
       });
     });
   </script>

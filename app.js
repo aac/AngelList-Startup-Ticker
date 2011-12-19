@@ -53,7 +53,7 @@ function getAndSendNewStartups(){
     }
     
     //console.log('requesting startups');
-    request('http://api.angel.co/1/tags/9217/startups/', function (error, response, body) {
+    request({url: "http://api.angel.co/1/tags/1643/startups"}, function (error, response, body) {
 	    if (!error && response.statusCode == 200) {
 		processStartups(JSON.parse(body).startups);
 	    }
